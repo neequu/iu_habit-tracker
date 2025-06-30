@@ -1,21 +1,7 @@
 import datetime
+from typing import List, Optional
+from models import HabitType, CompletionType
 
-
-from typing import TypedDict, List, NotRequired, Optional, Literal
-
-Periodicity = Literal["daily", "weekly", "biweekly", "monthly", "yearly"]
-
-class HabitType(TypedDict):
-  id: int
-  name: str
-  description: NotRequired[str]
-  periodicity: Periodicity
-  creation_date: str 
-
-class CompletionType(TypedDict):
-  id: int
-  habit_id: int 
-  completion_date: str
 
 class HabitTracker:
   habits:List[HabitType] = []
@@ -44,13 +30,15 @@ class HabitTracker:
   
   def complete_habit(self, id:int) -> CompletionType:
     """Mark a habit as done. Returns True if habit was found."""
-    h = next(item for item in self.habits if item.get("id") == id)
+    h: HabitType = next(item for item in self.habits if item.get("id") == id)
 
     if h is None:
         raise ValueError(f"Habit with id {id} not found.")
+    
+    # todo: add validation for completion within the same period
 
     today = datetime.date.today()
-    new_id = max((c["id"] for c in self.completions), default=0) + 1
+    new_id: int = max((c["id"] for c in self.completions), default=0) + 1
     new_completion: CompletionType = {"habit_id": id, "id": new_id, "completion_date": str(today)}
     self.completions.append(new_completion)
     return new_completion  
