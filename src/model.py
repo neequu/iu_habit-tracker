@@ -9,6 +9,13 @@ class HabitType(TypedDict):
   periodicity: Periodicity
   creation_date: str 
 
+class CreateHabitBody(TypedDict):
+  id: NotRequired[int]  # Make ID optional
+  name: str
+  description: NotRequired[str]
+  periodicity: Periodicity
+  creation_date: str 
+
 class CompletionType(TypedDict):
   id: int
   habit_id: int 

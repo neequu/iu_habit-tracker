@@ -1,5 +1,5 @@
 from datetime import datetime
-from models import Periodicity
+from src.model import Periodicity
 
 parse_date = lambda s: datetime.strptime(s, "%Y-%m-%d").date()
 

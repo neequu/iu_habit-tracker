@@ -1,21 +1,16 @@
 import datetime
 from typing import List, Optional
-from models import HabitType, CompletionType
-from src.db.database import add_habit
+from src.model import HabitType, CompletionType, CreateHabitBody
+from src.database import add_habit, seed_initial_habits
 
 
 class HabitTracker:
-  habits:List[HabitType] = []
-  completions:List[CompletionType] = []
-
-  def __init__(self, initial_habits: Optional[List[HabitType]] = None):
+  def __init__(self, initial_habits: Optional[List[HabitType]] = None) -> None:
     """Initialize with optional starting habits."""
-    self.habits = initial_habits.copy() if initial_habits else []
+    seed_initial_habits(initial_habits)
 
-  def create_habit(self, habit: HabitType) -> None:
+  def create_habit(self, habit: CreateHabitBody) -> None:
     """Add a new habit to the tracker."""
-    if not habit.get('id'):
-        raise ValueError("Habit must have an 'id' field")
     add_habit(habit)
 
   def delete_habit(self, id: int) -> bool:

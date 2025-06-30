@@ -1,7 +1,6 @@
 import sqlite3
 from pathlib import Path
-from ..main import habit, get_habits
-from models import HabitType
+from src.model import HabitType, CreateHabitBody
 
 DB_DIR = Path(__file__).parent 
 DB_PATH = DB_DIR / "habits.db"
@@ -42,7 +41,7 @@ def init_db():
 
 import datetime
 
-def seed_initial_habits() -> None:
+def seed_initial_habits(initial_habits) -> None:
     """Seeds the database with 5 predefined habits if none exist."""
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -55,29 +54,17 @@ def seed_initial_habits() -> None:
             print("Habits already seeded.")
             return
 
-        # Today's date
-        today = datetime.date.today().isoformat()
-
-        # Predefined habits (at least 1 daily, 1 weekly)
-        habits = [
-            ("Drink Water", "Stay hydrated by drinking 8 glasses", "daily", today),
-            ("Exercise", "Do 20 minutes of physical activity", "daily", today),
-            ("Read Book", "Read 10 pages of a book", "daily", today),
-            ("Call Parents", "Weekly call to family", "weekly", today),
-            ("Clean Room", "Tidy and organize living space", "weekly", today),
-        ]
-
         cursor.executemany("""
         INSERT INTO habits (name, description, periodicity, creation_date)
         VALUES (?, ?, ?, ?)
-        """, habits)
+        """, initial_habits)
 
         conn.commit()
         print("Seeded 5 initial habits.")       
 
 
 
-def add_habit(habit: HabitType) -> int | None:
+def add_habit(habit: CreateHabitBody) -> int | None:
     """Add a new habit to the database."""
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -129,5 +116,11 @@ def get_habit_by_id(habit_id: int) -> dict | None:
             }
         return None
 
-
+def delete_habit(habit_id: int) -> bool:
+    """Delete a habit by its ID."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM habits WHERE id = ?", (habit_id,))
+        conn.commit()
+        return cursor.rowcount > 0
 
