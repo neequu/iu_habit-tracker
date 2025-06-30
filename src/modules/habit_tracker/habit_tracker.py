@@ -1,6 +1,7 @@
 import datetime
 from typing import List, Optional
 from models import HabitType, CompletionType
+from src.db.database import add_habit
 
 
 class HabitTracker:
@@ -15,7 +16,7 @@ class HabitTracker:
     """Add a new habit to the tracker."""
     if not habit.get('id'):
         raise ValueError("Habit must have an 'id' field")
-    self.habits.append(habit)
+    add_habit(habit)
 
   def delete_habit(self, id: int) -> bool:
     """Remove a habit by ID. Returns True if found and deleted."""

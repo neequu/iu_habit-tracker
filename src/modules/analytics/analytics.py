@@ -1,5 +1,6 @@
 from models import HabitType, Periodicity
 from utils import get_period_delta, parse_date
+from src.db.database import get_all_habits
 
 def get_habits_by_period(period: Periodicity) -> list[HabitType]:
   """Get habits by period."""
@@ -8,8 +9,7 @@ def get_habits_by_period(period: Periodicity) -> list[HabitType]:
 
 def get_habits() -> list[HabitType]:
   """"Get all habits"""
-  habits = []
-  return habits.copy()
+  return get_all_habits()
 
 def get_longest_streak_by_id(habit_id: int) -> int:
     habits = []

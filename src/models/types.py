@@ -1,6 +1,6 @@
 from typing import TypedDict, NotRequired, Literal
 
-Periodicity = Literal["daily", "weekly", "biweekly", "monthly", "yearly"]
+Periodicity = Literal["daily", "weekly", "biweekly"]
 
 class HabitType(TypedDict):
   id: int
