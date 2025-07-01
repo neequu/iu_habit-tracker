@@ -11,35 +11,23 @@ from src.habit_tracker import HabitTracker
 from src.model import CreateHabitBody, HabitType
 
 
-def test_create_habit():
+def test_create_habit(habit_factory):
     tracker = HabitTracker()
+    habit = habit_factory()
 
-    habit_data: CreateHabitBody = {
-        "name": "Morning Run",
-        "description": "Run 2km every day",
-        "periodicity": "daily",
-        "start_date": "2025-01-01",
-    }
-
-    habit_id = tracker.create_habit(habit_data)
+    habit_id = tracker.create_habit(habit)
     assert habit_id is not None, "Failed to create habit"
 
     habit = query_habit_by_id(habit_id)
-    assert habit is not None, "Habit was not persisted to database"
-    assert habit["name"] == habit_data["name"]
+    assert habit is not None, "Habit was not added to database"
+    assert habit["name"] == habit["name"]
 
 
-def test_delete_habit():
+def test_delete_habit(habit_factory):
     tracker = HabitTracker()
+    habit = habit_factory()
 
-    habit_data: CreateHabitBody = {
-        "name": "Delete Me",
-        "description": "Will be deleted",
-        "periodicity": "daily",
-        "start_date": "2025-01-01",
-    }
-
-    habit_id = tracker.create_habit(habit_data)
+    habit_id = tracker.create_habit(habit)
     assert habit_id is not None, "Failed to create habit"
 
     result = tracker.delete_habit(habit_id)
@@ -49,17 +37,11 @@ def test_delete_habit():
     assert deleted is None, "Habit still exists after deletion"
 
 
-def test_complete_habit_first_time():
+def test_complete_habit_first_time(habit_factory):
     tracker = HabitTracker()
+    habit = habit_factory()
 
-    habit_data: CreateHabitBody = {
-        "name": "Meditate",
-        "description": "Daily meditation",
-        "periodicity": "daily",
-        "start_date": "2025-01-01",
-    }
-
-    habit_id = tracker.create_habit(habit_data)
+    habit_id = tracker.create_habit(habit)
     assert habit_id is not None, "Failed to create habit"
 
     completion_id = tracker.complete_habit(habit_id)
@@ -69,17 +51,11 @@ def test_complete_habit_first_time():
     assert latest is not None, "No completion found in DB"
 
 
-def test_complete_habit_twice_same_day_fails():
+def test_complete_habit_twice_same_day_fails(habit_factory):
     tracker = HabitTracker()
+    habit = habit_factory()
 
-    habit_data: CreateHabitBody = {
-        "name": "Stretching",
-        "description": "Once a day",
-        "periodicity": "daily",
-        "start_date": "2025-01-01",
-    }
-
-    habit_id = tracker.create_habit(habit_data)
+    habit_id = tracker.create_habit(habit)
     assert habit_id is not None
 
     # First completion should work
@@ -103,17 +79,11 @@ def test_complete_habit_not_found_fails():
     assert f"Habit with id {invalid_id} not found." in str(e.value)
 
 
-def test_complete_habit_after_period_allows():
+def test_complete_habit_after_period_allows(habit_factory):
     tracker = HabitTracker()
+    habit = habit_factory()
 
-    habit_data: CreateHabitBody = {
-        "name": "Journal Writing",
-        "description": "Weekly check-in",
-        "periodicity": "weekly",
-        "start_date": "2025-01-01",
-    }
-
-    habit_id = tracker.create_habit(habit_data)
+    habit_id = tracker.create_habit(habit)
     assert habit_id is not None
 
     # Add first completion 8 days ago (longer than a weekly gap)
