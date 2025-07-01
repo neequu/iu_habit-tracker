@@ -1,7 +1,8 @@
 import datetime
 from typing import List, Optional
 from src.model import HabitType, CompletionType, CreateHabitBody
-from src.database import add_habit, seed_initial_habits, delete_habit_by_id, query_habit_by_id, query_completions_by_habit_id, add_completion
+from src.database import add_habit, seed_initial_habits, delete_habit_by_id, query_habit_by_id, query_completions_by_habit_id, add_completion, query_latest_completion
+from src.dates import parse_date, get_period_delta
 
 
 class HabitTracker:
@@ -21,11 +22,17 @@ class HabitTracker:
   def complete_habit(self, id:int) -> int | None:
     """Mark a habit as done. Returns True if habit was found."""
     habit = query_habit_by_id(id)
-    completions = query_completions_by_habit_id(id)
 
     if habit is None:
         raise ValueError(f"Habit with id {id} not found.")
     
     today = datetime.date.today()
-    # # todo: add validation for completion within the same period
-    return add_completion(habit['id'], str(today))  
+    latest_completion = query_latest_completion(id)
+
+    if latest_completion:
+        last_date = parse_date(latest_completion["completion_date"])
+        period_delta = get_period_delta(habit["periodicity"])
+        if (today - last_date).days <= period_delta:
+            raise ValueError("Cannot complete habit twice in the same period.")
+
+    return add_completion(habit['id'], today.isoformat())  

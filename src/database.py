@@ -148,6 +148,22 @@ def query_completions_by_habit_id(habit_id: int, order: SortOrder = "ASC") -> li
                 for row in cursor.fetchall()
             ]
 
+def query_latest_completion(habit_id: int) -> CompletionType | None:
+    """Retrieves the most recent completion for a habit, or None if none exists."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, habit_id, completion_date
+            FROM completions
+            WHERE habit_id = ?
+            ORDER BY completion_date DESC
+            LIMIT 1
+        """, (habit_id,))
+        row = cursor.fetchone()
+        return (
+            {"id": row[0], "habit_id": row[1], "completion_date": row[2]}
+            if row else None
+        )
 
 
 def add_completion(habit_id: int, completion_date: str) -> int | None:
