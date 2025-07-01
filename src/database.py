@@ -43,7 +43,7 @@ def init_db() -> None:
             id INTEGER PRIMARY KEY,
             habit_id INTEGER NOT NULL,
             completion_date TEXT NOT NULL,
-            FOREIGN KEY(habit_id) REFERENCES habits(id)
+            FOREIGN KEY(habit_id) REFERENCES habits(id) ON DELETE CASCADE
         )
         """)
 
@@ -109,7 +109,7 @@ def query_habit_by_id(habit_id: int) -> HabitType | None:
         if row:
             return parse_habit_row(row)
         return None
-
+  
 def delete_habit_by_id(habit_id: int) -> bool:
     """Delete a habit by its ID."""
     with get_connection() as conn:
@@ -134,19 +134,21 @@ def query_habits_by_period(period: Periodicity) -> list[HabitType]:
 
 
 def query_completions_by_habit_id(habit_id: int, order: SortOrder = "ASC") -> list[CompletionType]:
-    """Retrieve a single habit by its ID."""
+    """Retrieve completions for a habit by its ID."""
+    order_clause = "ASC" if order == "ASC" else "DESC"
+
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(f"""
-            SELECT completion_date
+            SELECT id, habit_id, completion_date
             FROM completions 
             WHERE habit_id = ?
-            ORDER BY completion_date {order}
+            ORDER BY completion_date {order_clause}
         """, (habit_id,))
         return [
-                {"id": row[0], "habit_id": row[1], "completion_date": row[2]}
-                for row in cursor.fetchall()
-            ]
+            {"id": row[0], "habit_id": row[1], "completion_date": row[2]}
+            for row in cursor.fetchall()
+        ]
 
 def query_latest_completion(habit_id: int) -> CompletionType | None:
     """Retrieves the most recent completion for a habit, or None if none exists."""

@@ -32,7 +32,7 @@ class HabitTracker:
     if latest_completion:
         last_date = parse_date(latest_completion["completion_date"])
         period_delta = get_period_delta(habit["periodicity"])
-        if (today - last_date).days <= period_delta:
+        if (today - last_date).days < period_delta:
             raise ValueError("Cannot complete habit twice in the same period.")
 
     return add_completion(habit['id'], today.isoformat())  
