@@ -1,3 +1,4 @@
+import sqlite3
 from typing import Unpack
 
 import pytest
@@ -7,21 +8,17 @@ from src.model import CreateHabitBody
 
 
 @pytest.fixture(autouse=True)
-def setup_test_db(monkeypatch, tmp_path):
-    """Automatically runs before each test to set up a test database"""
-    # Create a temporary database file
-    test_db_path = tmp_path / "test_habits.db"
-
-    # Monkeypatch the DB_PATH to use test database
-    monkeypatch.setattr("database.DB_PATH", str(test_db_path))
-
-    # Ensure the directory exists
-    DB_DIR.mkdir(parents=True, exist_ok=True)
-
-    # Initialize the database
+def setup_test_db(monkeypatch):
+    # Create a shared in-memory connection
+    connection = sqlite3.connect(":memory:")
+    # Patch get_connection to always return this shared connection
+    monkeypatch.setattr("src.database.get_connection", lambda: connection)
+    # Initialize schema on this connection
     init_db()
 
     yield
+    # Close the shared connection after all tests
+    connection.close()
 
 
 @pytest.fixture
