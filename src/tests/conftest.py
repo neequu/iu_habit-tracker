@@ -1,3 +1,5 @@
+from typing import Unpack
+
 import pytest
 
 from src.database import DB_DIR, init_db
@@ -24,7 +26,7 @@ def setup_test_db(monkeypatch, tmp_path):
 
 @pytest.fixture
 def habit_factory():
-    def _make(**kwargs) -> CreateHabitBody:
+    def _make(**kwargs: Unpack[CreateHabitBody]) -> CreateHabitBody:
         return {
             "name": kwargs.get("name", "Default habit"),
             "description": kwargs.get("description", "Default description"),

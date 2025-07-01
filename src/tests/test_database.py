@@ -1,29 +1,25 @@
 from src.database import (
-    add_habit,
-    query_habit_by_id,
-    delete_habit_by_id,
     add_completion,
+    add_habit,
+    delete_habit_by_id,
     query_completions_by_habit_id,
+    query_habit_by_id,
     query_habits,
     query_habits_by_period,
     query_latest_completion_by_habit_id,
 )
-
 from src.model import CreateHabitBody
 
-def test_add_and_retrieve_habits() -> None:
+
+def test_add_and_retrieve_habits(habit_factory) -> None:
     """Test that habits can be added and retrieved"""
     # Initial data
     habit_name = "test habit"
-    habit_periodicity = 'daily'
+    habit_periodicity = "daily"
+    habit_data: CreateHabitBody = habit_factory(
+        name=habit_name, periodicity=habit_periodicity
+    )
 
-    habit_data: CreateHabitBody = {
-        "name": habit_name,
-        "description": "test description",
-        "periodicity": habit_periodicity,
-        "start_date": "2025-01-01"
-    }
-    
     # Get initial habits
     habits = query_habits()
 
@@ -39,16 +35,11 @@ def test_add_and_retrieve_habits() -> None:
     assert len(updated_habits) - len(habits) == 1, "Habit was not added to DB"
 
 
-def test_add_and_delete_habit():
+def test_add_and_delete_habit(habit_factory):
     """Test that habits can be deleted"""
     # Initial data
-    habit_data: CreateHabitBody = {
-        "name": "for deletion",
-        "description": "will be deleted",
-        "periodicity": "weekly",
-        "start_date": "2025-05-05"
-    }
-    
+    habit_data: CreateHabitBody = habit_factory()
+
     # Check if habit was added
     habit_id = add_habit(habit_data)
     assert habit_id is not None, "Habit creation failed"
@@ -60,23 +51,12 @@ def test_add_and_delete_habit():
     assert habit is None, "Habit was not removed from DB"
 
 
-
-def test_query_habits_by_period():
+def test_query_habits_by_period(habit_factory):
     # Initial habit data
     habit_data: list[CreateHabitBody] = [
-      {
-          "name": "Daily Exercise",
-          "description": "30 minutes of cardio",
-          "periodicity": "daily",
-          "start_date": "2025-01-02"
-      },
-      {
-          "name": "Weekly Review",
-          "description": "Work tasks review",
-          "periodicity": "weekly",
-          "start_date": "2025-01-01"
-      }
-  ]
+        habit_factory(periodicity="daily"),
+        habit_factory(periodicity="weekly"),
+    ]
     # Initial period data
     initial_daily_habits = query_habits_by_period("daily")
     initial_weekly_habits = query_habits_by_period("weekly")
@@ -89,51 +69,50 @@ def test_query_habits_by_period():
         assert habit_id is not None
         habit_ids.append(habit_id)
 
-
     # Test daily habits
     daily_habits = query_habits_by_period("daily")
-    assert len(daily_habits) - len(initial_daily_habits) == 1, "Wrong habit daily period added"
+    assert (
+        len(daily_habits) - len(initial_daily_habits) == 1
+    ), "Wrong habit daily period added"
 
     # Test weekly habits
     weekly_habits = query_habits_by_period("weekly")
-    assert len(weekly_habits) - len(initial_weekly_habits) == 1, "Wrong habit weekly period added"
+    assert (
+        len(weekly_habits) - len(initial_weekly_habits) == 1
+    ), "Wrong habit weekly period added"
 
     # Test empty case
     biweekly_habits = query_habits_by_period("biweekly")
-    assert len(biweekly_habits) - len(initial_biweekly_habits) == 0, "Wrong habit biweekly period added"
+    assert (
+        len(biweekly_habits) - len(initial_biweekly_habits) == 0
+    ), "Wrong habit biweekly period added"
 
 
-def test_add_and_retrieve_completion() -> None:
+def test_add_and_retrieve_completion(habit_factory) -> None:
     """Test that completions can be added and retrieved"""
     # Arrange
-    habit_data: CreateHabitBody = {
-        "name": "Test Habit",
-        "description": "Test Description",
-        "periodicity": "daily",
-        "start_date": "2025-10-10"
-    }
+    habit_data: CreateHabitBody = habit_factory()
     completion_date = "2025-10-17"
-    
+
     # Create habit
     habit_id = add_habit(habit_data)
     assert habit_id is not None, "Habit creation failed"
-    
+
     # Verify initial state
     initial_completions = query_completions_by_habit_id(habit_id)
     assert len(initial_completions) == 0, "Should start with no completions"
-    
+
     # Add completion
-    completion_id = add_completion({
-        "habit_id": habit_id, 
-        "completion_date": completion_date
-    })
+    completion_id = add_completion(
+        {"habit_id": habit_id, "completion_date": completion_date}
+    )
     assert completion_id is not None, "Completion creation failed"
-    
+
     # Verify changes
     updated_completions = query_completions_by_habit_id(habit_id)
     assert len(updated_completions) == 1, "Should have exactly one completion"
-    
+
     latest_completion = query_latest_completion_by_habit_id(habit_id)
     assert latest_completion is not None, "Should find latest completion"
-    assert latest_completion['completion_date'] == completion_date
-    assert latest_completion['habit_id'] == habit_id
+    assert latest_completion["completion_date"] == completion_date
+    assert latest_completion["habit_id"] == habit_id

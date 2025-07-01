@@ -14,7 +14,7 @@ class HabitType(TypedDict):
 
 class CreateHabitBody(TypedDict):
     name: str
-    description: str
+    description: NotRequired[str]
     periodicity: Periodicity
     start_date: str
 
