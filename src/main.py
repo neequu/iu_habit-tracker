@@ -8,7 +8,7 @@ habit = HabitTracker()
 
 today = datetime.date.today().isoformat()
 
-# Predefined habits (at least 1 daily, 1 weekly)
+# predefined habits (at least 1 daily, 1 weekly)
 habits = [
     ("Drink Water", "Stay hydrated by drinking 8 glasses", "daily", today),
     ("Exercise", "Do 20 minutes of physical activity", "daily", today),
@@ -18,10 +18,8 @@ habits = [
 ]
 
 
-# Call this only once at program start
+# call this only once at program start
 if __name__ == "__main__":
-    today = datetime.date.today().isoformat()
     init_db()
     seed_initial_habits(habits)
-    habit.create_habit({"creation_date": today, "name": "test", "periodicity": "biweekly", "description": "testing"})
-    # print(calculate_habits_by_period('weekly'))
+    habit.create_habit({"start_date": today, "name": "test", "periodicity": "biweekly", "description": "testing"})

@@ -1,14 +1,11 @@
 import datetime
-from typing import List, Optional
-from src.model import HabitType, CompletionType, CreateHabitBody
-from src.database import add_habit, seed_initial_habits, delete_habit_by_id, query_habit_by_id, query_completions_by_habit_id, add_completion, query_latest_completion
+from src.model import CreateHabitBody
+from src.database import add_habit, delete_habit_by_id, query_habit_by_id, add_completion, query_latest_completion
 from src.dates import parse_date, get_period_delta
 
 
 class HabitTracker:
-  def __init__(self, initial_habits: Optional[List[HabitType]] = None) -> None:
-    """Initialize with optional starting habits."""
-    # seed_initial_habits(initial_habits)
+  def __init__(self) -> None:
     pass
 
   def create_habit(self, habit: CreateHabitBody) -> int | None:

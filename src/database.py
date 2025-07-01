@@ -2,7 +2,6 @@ import sqlite3
 from pathlib import Path
 from src.model import HabitType, CreateHabitBody, Periodicity, CompletionType, CreateCompletionBody
 from typing import Literal
-import datetime
 
 SortOrder = Literal["ASC", "DESC"]
 
@@ -15,7 +14,7 @@ def parse_habit_row(row: tuple) -> HabitType:
         "name": row[1],
         "description": row[2],
         "periodicity": row[3],
-        "creation_date": row[4],
+        "start_date": row[4],
     }
 
 def get_connection() -> sqlite3.Connection:
@@ -34,7 +33,7 @@ def init_db() -> None:
             name TEXT NOT NULL,
             description TEXT,
             periodicity TEXT NOT NULL,
-            creation_date TEXT NOT NULL
+            start_date TEXT NOT NULL
         )
         """)
 
@@ -50,11 +49,11 @@ def init_db() -> None:
         conn.commit()
 
 def seed_initial_habits(initial_habits) -> None:
-    """Seeds the database with 5 predefined habits if none exist."""
+    """Seeds the database with predefined habits if none exist."""
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        # Check if any habits already exist
+        # check if any habits already exist
         cursor.execute("SELECT COUNT(*) FROM habits")
         count = cursor.fetchone()[0]
 
@@ -63,12 +62,12 @@ def seed_initial_habits(initial_habits) -> None:
             return
 
         cursor.executemany("""
-        INSERT INTO habits (name, description, periodicity, creation_date)
+        INSERT INTO habits (name, description, periodicity, start_date)
         VALUES (?, ?, ?, ?)
         """, initial_habits)
 
         conn.commit()
-        print("Seeded 5 initial habits.")       
+        print(f"Seeded {len(initial_habits)} initial habits.")       
 
 
 
@@ -77,13 +76,13 @@ def add_habit(habit: CreateHabitBody) -> int | None:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("""
-        INSERT INTO habits (name, description, periodicity, creation_date)
+        INSERT INTO habits (name, description, periodicity, start_date)
         VALUES (?, ?, ?, ?)
         """, (
             habit["name"],
             habit.get("description", ""),
             habit["periodicity"],
-            habit["creation_date"],
+            habit["start_date"],
         ))
         conn.commit()
         return cursor.lastrowid
@@ -92,7 +91,7 @@ def query_habits() -> list[HabitType]:
     """Retrieve all habits from the database."""
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, name, description, periodicity, creation_date FROM habits")
+        cursor.execute("SELECT id, name, description, periodicity, start_date FROM habits")
         rows = cursor.fetchall()
         return [parse_habit_row(row) for row in rows]
 
@@ -102,7 +101,7 @@ def query_habit_by_id(habit_id: int) -> HabitType | None:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT id, name, description, periodicity, creation_date
+        SELECT id, name, description, periodicity, start_date
         FROM habits WHERE id = ?
         """, (habit_id,))
         row = cursor.fetchone()
@@ -124,7 +123,7 @@ def query_habits_by_period(period: Periodicity) -> list[HabitType]:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT id, name, description, periodicity, creation_date 
+        SELECT id, name, description, periodicity, start_date 
         FROM habits 
         WHERE periodicity = ?
         
@@ -134,7 +133,7 @@ def query_habits_by_period(period: Periodicity) -> list[HabitType]:
 
 
 def query_completions_by_habit_id(habit_id: int, order: SortOrder = "ASC") -> list[CompletionType]:
-    """Retrieve completions for a habit by its ID."""
+    """Retrieve completions for a habit by habit's ID."""
     order_clause = "ASC" if order == "ASC" else "DESC"
 
     with get_connection() as conn:
@@ -169,7 +168,7 @@ def query_latest_completion(habit_id: int) -> CompletionType | None:
 
 
 def add_completion(habit_id: int, completion_date: str) -> int | None:
-    """Add a new habit to the database."""
+    """Add a habit completion entry to the database."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("""
