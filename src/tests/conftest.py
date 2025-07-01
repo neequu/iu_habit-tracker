@@ -1,6 +1,7 @@
 import pytest
 
 from src.database import DB_DIR, init_db
+from src.model import CreateHabitBody
 
 
 @pytest.fixture(autouse=True)
@@ -19,3 +20,16 @@ def setup_test_db(monkeypatch, tmp_path):
     init_db()
 
     yield
+
+
+@pytest.fixture
+def habit_factory():
+    def _make(**kwargs) -> CreateHabitBody:
+        return {
+            "name": kwargs.get("name", "Default habit"),
+            "description": kwargs.get("description", "Default description"),
+            "periodicity": kwargs.get("periodicity", "daily"),
+            "start_date": kwargs.get("start_date", "2025-01-01"),
+        }
+
+    return _make
