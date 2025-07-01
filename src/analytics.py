@@ -1,6 +1,6 @@
 from .model import HabitType, Periodicity
 from src.database import query_habits, query_habits_by_period, query_completions_by_habit_id, query_habit_by_id
-from src.dates import get_period_delta, parse_date
+from date_utils import get_period_delta, parse_date
 import datetime
 
 def get_habits_by_period(period: Periodicity) -> list[HabitType]:
