@@ -18,7 +18,13 @@ pip install .
 pip install .[dev]
 ```
 
+### Run tests
+```bash
+pytest -v
+```
+
 ## Tech Stack
 - Python 3.12
 - Click CLI
 - SQLite DB
+- Pytest
