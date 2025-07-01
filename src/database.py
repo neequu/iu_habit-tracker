@@ -1,17 +1,29 @@
 import sqlite3
 from pathlib import Path
-from src.model import HabitType, CreateHabitBody
+from src.model import HabitType, CreateHabitBody, Periodicity, CompletionType, CreateCompletionBody
+from typing import Literal
+import datetime
+
+SortOrder = Literal["ASC", "DESC"]
 
 DB_DIR = Path(__file__).parent 
 DB_PATH = DB_DIR / "habits.db"
 
+def parse_habit_row(row: tuple) -> HabitType:
+    return {
+        "id": row[0],
+        "name": row[1],
+        "description": row[2],
+        "periodicity": row[3],
+        "creation_date": row[4],
+    }
 
 def get_connection() -> sqlite3.Connection:
     """Ensure directory and return connection."""
     DB_DIR.mkdir(parents=True, exist_ok=True)
     return sqlite3.connect(DB_PATH)
 
-def init_db():
+def init_db() -> None:
     """Creates tables if they don't exist."""
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -36,10 +48,6 @@ def init_db():
         """)
 
         conn.commit()
-
-
-
-import datetime
 
 def seed_initial_habits(initial_habits) -> None:
     """Seeds the database with 5 predefined habits if none exist."""
@@ -80,24 +88,16 @@ def add_habit(habit: CreateHabitBody) -> int | None:
         conn.commit()
         return cursor.lastrowid
 
-def get_all_habits() -> list[HabitType]:
+def query_habits() -> list[HabitType]:
     """Retrieve all habits from the database."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT id, name, description, periodicity, creation_date FROM habits")
         rows = cursor.fetchall()
-        return [
-            {
-                "id": row[0],
-                "name": row[1],
-                "description": row[2],
-                "periodicity": row[3],
-                "creation_date": row[4],
-            }
-            for row in rows
-        ]
+        return [parse_habit_row(row) for row in rows]
 
-def get_habit_by_id(habit_id: int) -> dict | None:
+
+def query_habit_by_id(habit_id: int) -> HabitType | None:
     """Retrieve a single habit by its ID."""
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -107,16 +107,10 @@ def get_habit_by_id(habit_id: int) -> dict | None:
         """, (habit_id,))
         row = cursor.fetchone()
         if row:
-            return {
-                "id": row[0],
-                "name": row[1],
-                "description": row[2],
-                "periodicity": row[3],
-                "creation_date": row[4],
-            }
+            return parse_habit_row(row)
         return None
 
-def delete_habit(habit_id: int) -> bool:
+def delete_habit_by_id(habit_id: int) -> bool:
     """Delete a habit by its ID."""
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -124,3 +118,48 @@ def delete_habit(habit_id: int) -> bool:
         conn.commit()
         return cursor.rowcount > 0
 
+
+def query_habits_by_period(period: Periodicity) -> list[HabitType]:
+    """Retrieve all habits from the database."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT id, name, description, periodicity, creation_date 
+        FROM habits 
+        WHERE periodicity = ?
+        
+        """, (period,))
+        rows = cursor.fetchall()
+        return [parse_habit_row(row) for row in rows]
+
+
+def query_completions_by_habit_id(habit_id: int, order: SortOrder = "ASC") -> list[CompletionType]:
+    """Retrieve a single habit by its ID."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"""
+            SELECT completion_date
+            FROM completions 
+            WHERE habit_id = ?
+            ORDER BY completion_date {order}
+        """, (habit_id,))
+        return [
+                {"id": row[0], "habit_id": row[1], "completion_date": row[2]}
+                for row in cursor.fetchall()
+            ]
+
+
+
+def add_completion(habit_id: int, completion_date: str) -> int | None:
+    """Add a new habit to the database."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO completions (habit_id, completion_date)
+            VALUES (?, ?)
+        """, (
+            habit_id,
+            completion_date,
+        ))
+        conn.commit()
+        return cursor.lastrowid

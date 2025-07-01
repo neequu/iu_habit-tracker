@@ -1,7 +1,7 @@
 from src.database import init_db, seed_initial_habits
 from src.habit_tracker import HabitTracker
-from src.analytics import get_habits
 import datetime
+
 
 
 habit = HabitTracker()
@@ -18,11 +18,10 @@ habits = [
 ]
 
 
-
 # Call this only once at program start
 if __name__ == "__main__":
     today = datetime.date.today().isoformat()
     init_db()
     seed_initial_habits(habits)
     habit.create_habit({"creation_date": today, "name": "test", "periodicity": "biweekly", "description": "testing"})
-    print(get_habits())
+    # print(calculate_habits_by_period('weekly'))
