@@ -1,21 +1,31 @@
-from .model import HabitType, Periodicity
-from src.database import query_habits, query_habits_by_period, query_completions_by_habit_id, query_habit_by_id
-from date_utils import get_period_delta, parse_date
 import datetime
 
+from date_utils import get_period_delta, parse_date
+from src.database import (
+    query_completions_by_habit_id,
+    query_habit_by_id,
+    query_habits,
+    query_habits_by_period,
+)
+
+from .model import HabitType, Periodicity
+
+
 def get_habits_by_period(period: Periodicity) -> list[HabitType]:
-  """Get habits by period."""
-  return query_habits_by_period(period)
+    """Get habits by period."""
+    return query_habits_by_period(period)
+
 
 def get_habits() -> list[HabitType]:
-  """"Get all habits"""
-  return query_habits()
+    """ "Get all habits"""
+    return query_habits()
+
 
 def get_longest_streak_by_id(habit_id: int) -> int:
     """Get the longest streak of a single habit by id"""
     habit = query_habit_by_id(habit_id)
     completions = query_completions_by_habit_id(habit_id)
-    if not habit or not completions: 
+    if not habit or not completions:
         return 0
 
     max_streak = 1
@@ -23,9 +33,9 @@ def get_longest_streak_by_id(habit_id: int) -> int:
     gap = get_period_delta(habit["periodicity"])
 
     for i in range(1, len(completions)):
-        prev_date = parse_date(completions[i-1]["completion_date"])
+        prev_date = parse_date(completions[i - 1]["completion_date"])
         curr_date = parse_date(completions[i]["completion_date"])
-        
+
         if (curr_date - prev_date).days <= gap:
             current_streak += 1
             max_streak = max(max_streak, current_streak)
@@ -62,6 +72,8 @@ def get_streak_by_habit_id(habit_id: int) -> int:
     return current_streak
 
 
-
 def get_streaks() -> list[dict]:
-    return [{"id": item['id'], "streak": get_streak_by_habit_id(item['id'])} for item in get_habits()]
+    return [
+        {"id": item["id"], "streak": get_streak_by_habit_id(item["id"])}
+        for item in get_habits()
+    ]

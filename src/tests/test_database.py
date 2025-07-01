@@ -1,5 +1,3 @@
-
-
 from src.database import (
     add_habit,
     query_habit_by_id,
