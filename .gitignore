@@ -3,3 +3,6 @@ __pycache__
 *.egg-info/
 *.txt
 build/
+*.db
+*.sql
+settings.json
