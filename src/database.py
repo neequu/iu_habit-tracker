@@ -2,6 +2,8 @@ import sqlite3
 from pathlib import Path
 from src.model import HabitType, CreateHabitBody, Periodicity, CompletionType, CreateCompletionBody
 from typing import Literal
+from datetime import date, timedelta
+from src.date_utils import get_period_delta
 
 SortOrder = Literal["ASC", "DESC"]
 
@@ -48,12 +50,25 @@ def init_db() -> None:
 
         conn.commit()
 
+
+def generate_completions(habit_id: int, periodicity: Periodicity, start_date: date, week_count=4) -> list[tuple]:
+    """Generate completion data for a habit for given weeks. Default span is 4 weeks."""
+    completions: list[tuple] = []
+    delta = timedelta(days=get_period_delta(periodicity))
+    current_date = start_date - timedelta(weeks=week_count)
+    
+    while current_date <= start_date:
+        completions.append((habit_id, current_date.isoformat()))
+        current_date += delta
+    
+    return completions
+
 def seed_initial_habits(initial_habits) -> None:
-    """Seeds the database with predefined habits if none exist."""
+    """Seeds the database with predefined habits and 4 weeks of completion data."""
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        # check if any habits already exist
+        # Check if any habits already exist
         cursor.execute("SELECT COUNT(*) FROM habits")
         count = cursor.fetchone()[0]
 
@@ -61,13 +76,28 @@ def seed_initial_habits(initial_habits) -> None:
             print("Habits already seeded.")
             return
 
+        # Insert habits
         cursor.executemany("""
         INSERT INTO habits (name, description, periodicity, start_date)
         VALUES (?, ?, ?, ?)
         """, initial_habits)
 
+        # Get the IDs of the newly inserted habits
+        cursor.execute("SELECT id, periodicity, start_date FROM habits")
+        habits = cursor.fetchall()
+
+        # Generate and insert completions for each habit
+        for habit_id, periodicity, start_date in habits:
+            start_date = date.fromisoformat(start_date) if isinstance(start_date, str) else start_date
+            completions = generate_completions(habit_id, periodicity, start_date)
+            
+            cursor.executemany("""
+            INSERT INTO completions (habit_id, completion_date)
+            VALUES (?, ?)
+            """, completions)
+
         conn.commit()
-        print(f"Seeded {len(initial_habits)} initial habits.")       
+        print(f"Seeded {len(initial_habits)} initial habits with 4 weeks of completion data.")
 
 
 
