@@ -1,11 +1,9 @@
 import sqlite3
 from pathlib import Path
-from src.model import HabitType, CreateHabitBody, Periodicity, CompletionType, CreateCompletionBody
-from typing import Literal
+from src.model import HabitType, CreateHabitBody, CreateCompletionBody, Periodicity, CompletionType, SortOrder
 from datetime import date, timedelta
 from src.date_utils import get_period_delta
 
-SortOrder = Literal["ASC", "DESC"]
 
 DB_DIR = Path(__file__).parent 
 DB_PATH = DB_DIR / "habits.db"
@@ -179,7 +177,7 @@ def query_completions_by_habit_id(habit_id: int, order: SortOrder = "ASC") -> li
             for row in cursor.fetchall()
         ]
 
-def query_latest_completion(habit_id: int) -> CompletionType | None:
+def query_latest_completion_by_habit_id(habit_id: int) -> CompletionType | None:
     """Retrieves the most recent completion for a habit, or None if none exists."""
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -197,7 +195,7 @@ def query_latest_completion(habit_id: int) -> CompletionType | None:
         )
 
 
-def add_completion(habit_id: int, completion_date: str) -> int | None:
+def add_completion(completion: CreateCompletionBody) -> int | None:
     """Add a habit completion entry to the database."""
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -205,8 +203,8 @@ def add_completion(habit_id: int, completion_date: str) -> int | None:
             INSERT INTO completions (habit_id, completion_date)
             VALUES (?, ?)
         """, (
-            habit_id,
-            completion_date,
+            completion['habit_id'],
+            completion['completion_date'],
         ))
         conn.commit()
         return cursor.lastrowid

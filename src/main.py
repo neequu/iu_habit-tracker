@@ -9,4 +9,3 @@ if __name__ == "__main__":
     init_db()
     seed_initial_habits(initial_habits)
     habit = HabitTracker()
-    habit.create_habit({"start_date": today, "name": "test", "periodicity": "biweekly", "description": "testing"})

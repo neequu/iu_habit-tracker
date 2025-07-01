@@ -1,6 +1,8 @@
 from typing import TypedDict, NotRequired, Literal
 
 Periodicity = Literal["daily", "weekly", "biweekly"]
+SortOrder = Literal["ASC", "DESC"]
+
 
 class HabitType(TypedDict):
     id: int

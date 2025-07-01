@@ -1,6 +1,6 @@
 import datetime
 from src.model import CreateHabitBody
-from src.database import add_habit, delete_habit_by_id, query_habit_by_id, add_completion, query_latest_completion
+from src.database import add_habit, delete_habit_by_id, query_habit_by_id, add_completion, query_latest_completion_by_habit_id
 from date_utils import parse_date, get_period_delta
 
 
@@ -24,7 +24,7 @@ class HabitTracker:
         raise ValueError(f"Habit with id {id} not found.")
     
     today = datetime.date.today()
-    latest_completion = query_latest_completion(id)
+    latest_completion = query_latest_completion_by_habit_id(id)
 
     if latest_completion:
         last_date = parse_date(latest_completion["completion_date"])
@@ -32,4 +32,7 @@ class HabitTracker:
         if (today - last_date).days < period_delta:
             raise ValueError("Cannot complete habit twice in the same period.")
 
-    return add_completion(habit['id'], today.isoformat())  
+    return add_completion({
+       "completion_date": today.isoformat(),
+       "habit_id": habit['id'], 
+    })  
