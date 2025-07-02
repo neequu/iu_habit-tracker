@@ -2,8 +2,7 @@ import sqlite3
 from datetime import date, timedelta
 from pathlib import Path
 
-from src.date_utils import get_period_delta
-from src.model import (
+from src.core.model import (
     CompletionType,
     CreateCompletionBody,
     CreateHabitBody,
@@ -11,6 +10,7 @@ from src.model import (
     Periodicity,
     SortOrder,
 )
+from src.infra.date_utils import get_period_delta
 
 DB_DIR = Path(__file__).parent
 DB_PATH = DB_DIR / "habits.db"

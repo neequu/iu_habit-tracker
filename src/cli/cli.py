@@ -1,12 +1,12 @@
 import click
 
-from src.analytics import (
+from src.core.analytics import (
     get_habits,
     get_habits_by_period,
     get_longest_streak_by_id,
     get_streaks,
 )
-from src.habit_tracker import HabitTracker
+from src.core.habit_tracker import HabitTracker
 
 tracker = HabitTracker()
 

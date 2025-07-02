@@ -1,14 +1,14 @@
 import datetime
 
-from date_utils import get_period_delta, parse_date
-from src.database import (
+from src.core.model import CreateHabitBody
+from src.infra.database import (
     add_completion,
     add_habit,
     delete_habit_by_id,
     query_habit_by_id,
     query_latest_completion_by_habit_id,
 )
-from src.model import CreateHabitBody
+from src.infra.date_utils import get_period_delta, parse_date
 
 
 class HabitTracker:

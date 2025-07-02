@@ -1,6 +1,6 @@
 from src.cli import cli
-from src.constants import initial_habits, today
-from src.database import init_db, seed_initial_habits
+from src.core.constants import initial_habits
+from src.infra.database import init_db, seed_initial_habits
 
 # call this only once at program start
 if __name__ == "__main__":

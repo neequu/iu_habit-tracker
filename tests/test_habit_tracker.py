@@ -2,13 +2,13 @@ import datetime
 
 import pytest
 
-from src.database import (
+from src.core.habit_tracker import HabitTracker
+from src.core.model import CreateHabitBody, HabitType
+from src.infra.database import (
     add_completion,
     query_habit_by_id,
     query_latest_completion_by_habit_id,
 )
-from src.habit_tracker import HabitTracker
-from src.model import CreateHabitBody, HabitType
 
 
 def test_create_habit(habit_factory):

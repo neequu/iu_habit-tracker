@@ -1,4 +1,5 @@
-from src.database import (
+from src.core.model import CreateHabitBody
+from src.infra.database import (
     add_completion,
     add_habit,
     delete_habit_by_id,
@@ -8,7 +9,6 @@ from src.database import (
     query_habits_by_period,
     query_latest_completion_by_habit_id,
 )
-from src.model import CreateHabitBody
 
 
 def test_add_and_retrieve_habits(habit_factory) -> None:

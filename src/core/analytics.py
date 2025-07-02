@@ -1,12 +1,12 @@
 import datetime
 
-from date_utils import get_period_delta, parse_date
-from src.database import (
+from src.infra.database import (
     query_completions_by_habit_id,
     query_habit_by_id,
     query_habits,
     query_habits_by_period,
 )
+from src.infra.date_utils import get_period_delta, parse_date
 
 from .model import HabitType, Periodicity
 

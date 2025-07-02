@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from src.constants import PERIOD_DELTAS
-from src.model import Periodicity
+from src.core.constants import PERIOD_DELTAS
+from src.core.model import Periodicity
 
 parse_date = lambda s: datetime.strptime(s, "%Y-%m-%d").date()
 

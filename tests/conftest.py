@@ -3,8 +3,8 @@ from typing import Unpack
 
 import pytest
 
-from src.database import DB_DIR, init_db
-from src.model import CreateHabitBody
+from src.core.model import CreateHabitBody
+from src.infra.database import DB_DIR, init_db
 
 
 @pytest.fixture(autouse=True)
@@ -12,7 +12,7 @@ def setup_test_db(monkeypatch):
     # Create a shared in-memory connection
     connection = sqlite3.connect(":memory:")
     # Patch get_connection to always return this shared connection
-    monkeypatch.setattr("src.database.get_connection", lambda: connection)
+    monkeypatch.setattr("src.infra.database.get_connection", lambda: connection)
     # Initialize schema on this connection
     init_db()
 

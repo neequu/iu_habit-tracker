@@ -1,13 +1,13 @@
 import datetime
 
-from src.analytics import (
+from src.core.analytics import (
     get_habits_by_period,
     get_longest_streak_by_id,
     get_streak_by_habit_id,
     get_streaks,
 )
-from src.database import add_completion, add_habit
-from src.model import CreateHabitBody
+from src.core.model import CreateHabitBody
+from src.infra.database import add_completion, add_habit
 
 
 def test_get_habits_by_period(habit_factory):
