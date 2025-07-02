@@ -88,7 +88,6 @@ def seed_initial_habits(initial_habits) -> None:
         count = cursor.fetchone()[0]
 
         if count > 0:
-            print("Habits already seeded.")
             return
 
         # Insert habits
