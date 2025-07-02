@@ -46,7 +46,7 @@ def test_add_and_delete_habit(habit_factory):
 
     # Check if habit was deleted
     success = delete_habit_by_id(habit_id)
-    assert success == True, "Habit was not deleted"
+    assert success is True, "Habit was not deleted"
     habit = query_habit_by_id(habit_id)
     assert habit is None, "Habit was not removed from DB"
 
