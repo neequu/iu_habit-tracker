@@ -62,10 +62,10 @@ This lists the arguments and options for a given command
 ### **Analytics**
 ```bash
 # List all habits
-./habit list-all
+./habit list
 
 # Filter habits by period
-./habit list-by-period --period [daily|weekly|biweekly]
+./habit list --period [daily|weekly|biweekly]
 
 # Get streaks
 ./habit streaks
@@ -80,7 +80,7 @@ This lists the arguments and options for a given command
 ```bash
 1. ./habit create "Meditate" --periodicity daily
 2. ./habit complete 1
-3. ./habit list-by-period --period daily
+3. ./habit list --period daily
 4. ./habit longest-streak 1
 ```
 ---

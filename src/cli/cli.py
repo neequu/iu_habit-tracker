@@ -70,19 +70,24 @@ def complete(habit_id):
 # -------------------------
 
 
-@cli.command()
-@click.option("--period", type=click.Choice(PERIOD_DELTAS.keys()), required=True)
-def list_by_period(period):
-    """List habits by periodicity"""
-    habits = get_habits_by_period(period)
+@cli.command(name="list")
+@click.option(
+    "--period",
+    type=click.Choice(PERIOD_DELTAS.keys()),
+    help="Filter habits by periodicity",
+)
+def list_habits(period):
+    """List all habits, optionally filtered by periodicity."""
+    if period:
+        habits = get_habits_by_period(period)
+    else:
+        habits = get_habits()
+
+    if not habits:
+        click.echo("No habits found.")
+        return
+
     for h in habits:
-        click.echo(f"[{h['id']}] {h['name']} ({h['periodicity']})")
-
-
-@cli.command()
-def list_all():
-    """List all habits"""
-    for h in get_habits():
         click.echo(f"[{h['id']}] {h['name']} ({h['periodicity']})")
 
 
