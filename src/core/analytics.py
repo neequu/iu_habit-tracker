@@ -12,17 +12,39 @@ from .model import HabitType, Periodicity
 
 
 def get_habits_by_period(period: Periodicity) -> list[HabitType]:
-    """Get habits by period."""
+    """Retrieves all habits with the specified periodicity.
+
+    Args:
+        period (Periodicity): The periodicity to filter by ('daily', 'weekly', or 'biweekly')
+
+    Returns:
+        list[HabitType]: List of habits matching the periodicity, empty list if none found
+    """
     return query_habits_by_period(period)
 
 
 def get_habits() -> list[HabitType]:
-    """ "Get all habits"""
+    """Retrieves all habits in the tracker.
+
+    Returns:
+        list[HabitType]: List of all habits, empty list if no habits exist
+    """
     return query_habits()
 
 
 def get_longest_streak_by_id(habit_id: int) -> int:
-    """Get the longest streak of a single habit by id"""
+    """Calculates the longest recorded streak for a specific habit.
+
+    Args:
+        habit_id (int): ID of the habit to analyze
+
+    Returns:
+        int: The longest consecutive streak count (0 if no completions exist)
+
+    Note:
+        A streak is counted when habit is completed within its periodicity window
+        (e.g., within 7 days for weekly habits)
+    """
     habit = query_habit_by_id(habit_id)
     completions = query_completions_by_habit_id(habit_id)
     if not habit or not completions:
@@ -46,6 +68,18 @@ def get_longest_streak_by_id(habit_id: int) -> int:
 
 
 def get_streak_by_habit_id(habit_id: int) -> int:
+    """Calculates the current active streak for a habit.
+
+    Args:
+        habit_id (int): ID of the habit to check
+
+    Returns:
+        int: Current consecutive streak count (0 if broken or no completions)
+
+    Note:
+        The streak is only active if the habit was completed within its
+        periodicity window from today's date
+    """
     habit = query_habit_by_id(habit_id)
     completions = query_completions_by_habit_id(habit_id, "DESC")
 
@@ -73,6 +107,13 @@ def get_streak_by_habit_id(habit_id: int) -> int:
 
 
 def get_streaks() -> list[dict]:
+    """Generates streak reports for all habits.
+
+    Returns:
+        list[dict]: List of dictionaries containing:
+            - id (int): Habit ID
+            - streak (int): Current streak count
+    """
     return [
         {"id": item["id"], "streak": get_streak_by_habit_id(item["id"])}
         for item in get_habits()

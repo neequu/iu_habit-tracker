@@ -16,15 +16,51 @@ class HabitTracker:
         pass
 
     def create_habit(self, habit: CreateHabitBody) -> int | None:
-        """Add a new habit to the tracker."""
+        """Creates and stores a new habit in the tracker.
+
+        Args:
+            habit (CreateHabitBody): Dictionary containing habit details including:
+                - name: str
+                - periodicity: str (daily/weekly/biweekly)
+                - description: Optional[str]
+                - creation_date: str (ISO format)
+
+        Returns:
+            int | None: ID of the newly created habit, or None if creation failed
+        """
         return add_habit(habit)
 
     def delete_habit(self, id: int) -> bool:
-        """Remove a habit by ID. Returns True if found and deleted."""
+        """Permanently removes a habit from the tracker.
+
+        Args:
+            id (int): The ID of the habit to delete
+
+        Returns:
+            bool: True if habit was found and deleted, False otherwise
+
+        Note:
+            This will also delete all completion records associated with the habit.
+        """
         return delete_habit_by_id(id)
 
     def complete_habit(self, id: int) -> int | None:
-        """Mark a habit as done. Returns True if habit was found."""
+        """Records a completion of the specified habit.
+
+        Args:
+            id (int): The ID of the habit to complete
+
+        Returns:
+            int | None: ID of the new completion record, or None if failed
+
+        Raises:
+            ValueError: If either:
+                - No habit exists with the given ID
+                - Habit was already completed in current period
+
+        Note:
+            Completion is only allowed once per period (day/week/biweek).
+        """
         habit = query_habit_by_id(id)
 
         if habit is None:
