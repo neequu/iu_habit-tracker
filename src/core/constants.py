@@ -1,7 +1,7 @@
 from datetime import date
 
 
-def get_today_date_string():
+def get_today_date_string() -> str:
     return date.today().isoformat()
 
 
