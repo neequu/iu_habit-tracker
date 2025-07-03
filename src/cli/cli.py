@@ -6,6 +6,7 @@ from src.core.analytics import (
     get_longest_streak_by_id,
     get_streaks,
 )
+from src.core.constants import PERIOD_DELTAS, get_today_date_string
 from src.core.habit_tracker import HabitTracker
 
 tracker = HabitTracker()
@@ -25,10 +26,10 @@ def cli():
 @cli.command()
 @click.argument("name")
 @click.option("--description", default="", help="Optional description")
+@click.option("--periodicity", type=click.Choice(PERIOD_DELTAS.keys()), required=True)
 @click.option(
-    "--periodicity", type=click.Choice(["daily", "weekly", "biweekly"]), required=True
+    "--start-date", default=get_today_date_string(), help="Start date in YYYY-MM-DD"
 )
-@click.option("--start-date", default="2025-01-01", help="Start date in YYYY-MM-DD")
 def create(name, description, periodicity, start_date):
     """Create a new habit"""
     habit_id = tracker.create_habit(
@@ -70,9 +71,7 @@ def complete(habit_id):
 
 
 @cli.command()
-@click.option(
-    "--period", type=click.Choice(["daily", "weekly", "biweekly"]), required=True
-)
+@click.option("--period", type=click.Choice(PERIOD_DELTAS.keys()), required=True)
 def list_by_period(period):
     """List habits by periodicity"""
     habits = get_habits_by_period(period)

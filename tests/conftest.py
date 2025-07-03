@@ -4,7 +4,7 @@ from typing import Unpack
 import pytest
 
 from src.core.model import CreateHabitBody
-from src.infra.database import DB_DIR, init_db
+from src.infra.database import init_db
 
 
 @pytest.fixture(autouse=True)
