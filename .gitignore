@@ -1,8 +1,10 @@
 __pycache__
 .venv
+venv
 *.egg-info/
 *.txt
 build/
 *.db
 *.sql
 settings.json
+.pytest_cache
