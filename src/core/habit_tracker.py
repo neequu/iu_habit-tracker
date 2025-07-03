@@ -9,13 +9,11 @@ from src.infra.database import (
     query_latest_completion_by_habit_id,
 )
 from src.infra.date_utils import get_period_delta, parse_date
-from src.infra.initialization import init_app
 
 
 class HabitTracker:
     def __init__(self) -> None:
-        """Calls the initialization function to prepare app environment."""
-        init_app()
+        pass
 
     def create_habit(self, habit: CreateHabitBody) -> int | None:
         """Creates and stores a new habit in the tracker.
