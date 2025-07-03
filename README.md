@@ -11,15 +11,34 @@ Track daily/weekly habits, mark completions, and get analytics on your streaksâ€
 ### 1. Clone & Enter  
 ```bash
 git clone https://github.com/neequu/iu_habit-tracker.git
-cd habit-tracker
+cd iu_habit-tracker
 ```
 
-### 2. Install Dependencies  
+Here's how to work with Python virtual environments (venv) properly:
+
+### 2. Create the Virtual Environment
+```bash
+# Create in your project folder (or wherever you want)
+python -m venv venv
+```
+
+### 2. Activate It
+#### **Windows (PowerShell)**
+```bash
+.\venv\Scripts\activate
+```
+#### **Mac/Linux**
+```bash
+source venv/bin/activate
+```
+
+
+### 3. Install Dependencies  
 ```bash
 pip install -e .[dev]  # Installs the app + dev tools (pytest)
 ```
 
-### 3. Run It 
+### 4. Run It 
 ```bash
 # Use the launcher script (make it executable first)
 chmod +x habit
