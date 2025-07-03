@@ -52,6 +52,7 @@ def delete(habit_id):
         click.echo("Habit deleted.")
     else:
         click.echo("Habit not found.")
+        raise click.Abort()
 
 
 @cli.command()
@@ -63,6 +64,7 @@ def complete(habit_id):
         click.echo(f"Habit completed. Completion ID: {completion_id}")
     except ValueError as e:
         click.echo(f"Error: {e}")
+        raise click.Abort()
 
 
 # -------------------------
