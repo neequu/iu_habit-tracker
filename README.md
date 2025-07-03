@@ -76,11 +76,11 @@ This lists the arguments and options for a given command
 
 ---
 
-**Example Session:**
+**Examples:**
 ```bash
-1. ./habit create "Meditate" --periodicity daily
-2. ./habit complete 1
-3. ./habit list --period daily
+1. ./habit create "Meditate" --periodicity daily # Returns ID (e.g. ID 1)
+2. ./habit complete 1 # Use this ID
+3. ./habit list --period daily # In case you forget ID, check with "list" command
 4. ./habit longest-streak 1
 ```
 ---
@@ -119,5 +119,5 @@ A: It makes the `habit` script executable (Linux/Mac quirk). Windows users can u
 A: Delete `src/infra/habits.db`—it auto-creates on restart.  
 
 ---
-Made for DLBDSOOFPP01 Object Oriented and Functional Programming with Python  @ IU University of Applied Sciences.  
+Made for **DLBDSOOFPP01: Object Oriented and Functional Programming with Python**  @ IU University of Applied Sciences.  
  
