@@ -12,6 +12,7 @@ from src.infra.database import (
 
 
 def test_create_habit(habit_factory):
+    """Verify habit creation stores valid attributes in the database."""
     tracker = HabitTracker()
     habit = habit_factory()
 
@@ -24,6 +25,7 @@ def test_create_habit(habit_factory):
 
 
 def test_delete_habit(habit_factory):
+    """Ensure habit deletion removes the record and associated completions."""
     tracker = HabitTracker()
     habit = habit_factory()
 
@@ -38,6 +40,7 @@ def test_delete_habit(habit_factory):
 
 
 def test_complete_habit_first_time(habit_factory):
+    """Test successful first completion of a habit."""
     tracker = HabitTracker()
     habit = habit_factory()
 
@@ -52,6 +55,7 @@ def test_complete_habit_first_time(habit_factory):
 
 
 def test_complete_habit_twice_same_day_fails(habit_factory):
+    """Prevent duplicate completions for the same habit on the same day."""
     tracker = HabitTracker()
     habit = habit_factory()
 
@@ -69,6 +73,7 @@ def test_complete_habit_twice_same_day_fails(habit_factory):
 
 
 def test_complete_habit_not_found_fails():
+    """Verify attempting to complete a non-existent habit raises an error."""
     tracker = HabitTracker()
 
     invalid_id = 999999
@@ -80,6 +85,7 @@ def test_complete_habit_not_found_fails():
 
 
 def test_complete_habit_after_period_allows(habit_factory):
+    """Allow new completions after the habit's periodicity window passes."""
     tracker = HabitTracker()
     habit = habit_factory()
 

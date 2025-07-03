@@ -11,6 +11,7 @@ from src.infra.database import add_completion, add_habit
 
 
 def test_get_habits_by_period(habit_factory):
+    """Filter habits correctly by their periodicity (daily/weekly/biweekly)."""
     # Initial habit data
     habit_data: list[CreateHabitBody] = [
         habit_factory(periodicity="daily"),
@@ -48,6 +49,8 @@ def test_get_habits_by_period(habit_factory):
 
 
 def test_get_longest_streak_by_id(habit_factory):
+    """Calculate the maximum streak length for a specific habit."""
+
     # Create a daily habit
     habit_id = add_habit(habit_factory())
 
@@ -71,6 +74,7 @@ def test_get_longest_streak_by_id(habit_factory):
 
 
 def test_get_streak_by_habit_id(habit_factory):
+    """Track current active streak for an individual habit."""
     # Create a daily habit
     habit_id = add_habit(habit_factory())
     assert habit_id is not None, "Failed to create habit"
@@ -101,6 +105,7 @@ def test_get_streak_by_habit_id(habit_factory):
 
 
 def test_get_streaks(habit_factory):
+    """Retrieve streak data for all habits at once."""
     # Create a few habits with various completion patterns
     habit_id = add_habit(habit_factory(name="Habit A"))
     assert habit_id is not None, "Failed to create habit"
