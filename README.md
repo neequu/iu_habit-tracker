@@ -2,7 +2,7 @@
 *A simple command-line tool to build and analyze habits*  
 
 **What this does**  
-Track daily/weekly habits, mark completions, and get analytics on your streaks—all from the terminal. Built with Python + SQLite.  
+Track daily/weekly habits, mark completions, and get analytics on your streaks-all from the terminal. Built with Python + SQLite.  
 
 ---
 
@@ -135,7 +135,7 @@ pytest tests/ -v
 A: It makes the `habit` script executable (Linux/Mac quirk). Windows users can use `python -m src.app` instead.  
 
 **Q: How do I reset everything?**  
-A: Delete `src/infra/habits.db`—it auto-creates on restart.  
+A: Delete `src/infra/habits.db`-it auto-creates on restart.  
 
 ---
 Made for **DLBDSOOFPP01: Object Oriented and Functional Programming with Python**  @ IU University of Applied Sciences.  
